@@ -1,9 +1,7 @@
 pipeline
 {
 
-agent {
-  label 'DevServer'
-}
+agent any
 
 parameters {
     choice choices: ['dev', 'prod'], name: 'select_environment'
