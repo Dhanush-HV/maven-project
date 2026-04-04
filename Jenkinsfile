@@ -1,23 +1,23 @@
 pipeline {
     agent any
 
-
-
     tools {
         maven 'mymaven'
     }
+
     environment {
         NAME = 'Dhanush'
     }
+
     parameters {
-         string defaultValue: 'DhanushDevang', name: 'name'
-}
+        string(name: 'name', defaultValue: 'DhanushDevang', description: 'Enter your name')
+    }
 
     stages {
         stage('Build') {
             steps {
                 sh 'mvn clean package'
-                echo 'hello $NAME, your build is succesfuly executed,${params.name}!'
+                echo "Hello ${env.NAME}, your build is successfully executed, ${params.name}!"
             }
         }
     }
