@@ -4,11 +4,15 @@ pipeline {
     tools {
         maven 'mymaven'
     }
+    environment {
+        NAME = 'Dhanush'
+    }
 
     stages {
         stage('Build') {
             steps {
                 sh 'mvn clean package'
+                echo 'hello $NAME, your build is succesfuly executed'
             }
         }
     }
