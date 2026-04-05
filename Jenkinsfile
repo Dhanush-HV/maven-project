@@ -18,7 +18,9 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'mvn clean package -DskipTests=true'
-                
+
+                // ✅ stash inside stage
+                stash name: 'web_build', includes: 'target/*.war'
             }
         }
 
@@ -26,7 +28,7 @@ pipeline {
             parallel {
 
                 stage('Test A') {
-                    agent {label 'Slave01'}
+                    agent { label 'Slave01' }
                     steps {
                         echo 'Running Test A'
                         sh 'mvn test'
@@ -34,37 +36,36 @@ pipeline {
                 }
 
                 stage('Test B') {
-                    agent {label 'Slave02'}
+                    agent { label 'Slave02' }
                     steps {
                         echo 'Running Test B'
                         sh 'mvn test'
                     }
                 }
+            }
+        }
 
+        stage('Deploy Dev') {
+            when {
+                expression { params.select_env == 'dev' }
+            }
+            agent { label 'Slave01' }
+
+            steps {
+                unstash 'web_build'
+
+                sh """
+                cp target/*.war /var/www/html/
+                cd /var/www/html/
+                jar -xvf *.war
+                """
             }
         }
     }
 
     post {
         success {
-            dir("webapp/target/") {
-                stash name:'web_build', includes:'*.war'
-            }
-        }
-    }
-    stage('deploy_dev'){
-        when {
-            expression { params.select_env == 'dev' }
-            beforeAgent true
-        }
-        agent {label 'Slave01'}
-        steps {
-            dir("var/www/html/") {
-                unstash 'web_build'
-            }
-            sh """ cd /var/www/html/
-                jar -xvf webapp.war
-            """
+            archiveArtifacts artifacts: 'target/*.war'
         }
     }
 }
