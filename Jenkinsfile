@@ -47,7 +47,24 @@ pipeline {
 
     post {
         success {
-            archiveArtifacts artifacts: '**/target/*.war'
+            dir("webapp/target/") {
+                stash name:'web_build', includes:'*.war'
+            }
+        }
+    }
+    stage('deploy_dev'){
+        when {
+            expression { params.select_env == 'dev' }
+            beforeAgent true
+        }
+        agent {label 'Slave01'}
+        steps {
+            dir("var/www/html/") {
+                unstash 'web_build'
+            }
+            sh """ cd /var/www/html/
+                jar -xvf webapp.war
+            """
         }
     }
 }
