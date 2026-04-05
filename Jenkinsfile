@@ -10,15 +10,15 @@ pipeline {
     }
 
     parameters {
-        string(name: 'name', defaultValue: 'DhanushDevang', description: 'Enter your name')
+        choice choices: ['dev', 'prod'], description: 'select environment', name: 'select_env'
     }
 
     stages {
 
         stage('Build') {
             steps {
-                sh 'mvn clean package'
-                echo "Hello ${env.NAME}, your build is successfully executed, ${params.name}!"
+                sh 'mvn clean package -DskipTests=true'
+                
             }
         }
 
@@ -26,14 +26,18 @@ pipeline {
             parallel {
 
                 stage('Test A') {
+                    agent {label 'Slave01'}
                     steps {
                         echo 'Running Test A'
+                        sh 'mvn test'
                     }
                 }
 
                 stage('Test B') {
+                    agent {label 'Slave02'}
                     steps {
                         echo 'Running Test B'
+                        sh 'mvn test'
                     }
                 }
 
