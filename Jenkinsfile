@@ -28,7 +28,7 @@ pipeline {
             parallel {
 
                 stage('Test A') {
-                    agent { label 'Slave01' }
+                    agent { label 'DevServer' }
                     steps {
                         echo 'Running Test A'
                         sh 'mvn test'
@@ -36,7 +36,7 @@ pipeline {
                 }
 
                 stage('Test B') {
-                    agent { label 'Slave02' }
+                    agent { label 'DevServer' }
                     steps {
                         echo 'Running Test B'
                         sh 'mvn test'
@@ -49,7 +49,7 @@ pipeline {
             when {
                 expression { params.select_env == 'dev' }
             }
-            agent { label 'Slave01' }
+            agent { label 'DevServer' }
 
             steps {
                 unstash 'web_build'
@@ -66,6 +66,7 @@ pipeline {
     post {
         success {
             archiveArtifacts artifacts: 'target/*.war'
+            echo "Your server is ready,to deploy on ${params.select_env} environment"
         }
     }
 }
