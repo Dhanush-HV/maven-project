@@ -15,8 +15,26 @@ pipeline{
     stages{
         stage('build'){
             steps{
-                sh 'mvn clean package'
+                sh 'mvn clean package -DskipTests=true'
                 echo "Hello ${NAME}, the build has been completed successfully"
+            }
+        }
+        stage('parallel test'){
+            parallel{
+                stage('test A'){
+                    steps{
+                        sh 'mvn test'
+                        echo "Hello ${NAME}, Test A has been executed successfully"
+                    }
+
+                }
+                stage('test B'){
+                    steps{
+                        sh 'mvn test'
+                        echo "Hello ${NAME}, Test B has been executed successfully"
+                    }
+
+                }
             }
         }
     }
