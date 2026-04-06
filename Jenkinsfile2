@@ -40,6 +40,7 @@ pipeline{
     }
     post{
         success{
+            archiveArtifacts artifacts: 'target/*.war'
             echo "Congratulations ${NAME}, the pipeline has been executed successfully"
         }
     }
