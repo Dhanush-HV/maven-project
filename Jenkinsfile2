@@ -1,0 +1,23 @@
+pipeline{
+    agent any
+
+    tools {
+        maven 'mymaven'
+    }
+
+    environment {
+        NAME = 'Dhanush'
+    }
+    parameters {
+        choice choices: ['dev', 'prod'], description: 'select environment', name: 'select_env'
+    }
+
+    stages{
+        stage('build'){
+            steps{
+                sh 'mvn clean package'
+                echo "Hello ${NAME}, the build has been completed successfully"
+            }
+        }
+    }
+}
