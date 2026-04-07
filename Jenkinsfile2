@@ -15,28 +15,11 @@ pipeline{
     stages{
         stage('build'){
             steps{
-                sh 'mvn clean package -DskipTests=true'
+                sh 'mvn clean package '
                
             }
         }
-        stage('parallel test'){
-            parallel{
-                stage('test A'){
-                    steps{
-                        sh 'mvn test'
-                        
-                    }
-
-                }
-                stage('test B'){
-                    steps{
-                        sh 'mvn test'
-                       
-                    }
-
-                }
-            }
-        }
+        
     }
     post{
         success{
