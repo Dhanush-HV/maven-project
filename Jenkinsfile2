@@ -23,7 +23,7 @@ pipeline{
     }
     post{
         success{
-            archiveArtifacts artifacts: 'target/*.war'
+            archiveArtifacts artifacts: 'webapp/target/*.war'
             
         }
     }
